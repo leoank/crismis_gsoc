@@ -2,6 +2,7 @@ name: crismis_gsoc
 channels:
 - fastai
 - pytorch
+- plotly
 - defaults
 dependencies:
 - jupyter
@@ -17,4 +18,6 @@ dependencies:
 - pip
 - scikit-learn
 - scipy
+- plotly
+- beautifulsoup4
 - plotly
