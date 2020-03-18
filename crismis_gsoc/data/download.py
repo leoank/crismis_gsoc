@@ -12,9 +12,9 @@ messenger_data_page_url = "https://pdsimage2.wr.usgs.gov/archive/mess-e_v_h-mdis
 messenger_data_page = requests.get(messenger_data_page_url)
 messenger_data_page_soup = BeautifulSoup(messenger_data_page.content, features="html.parser")
 
-# Process parsed data to extract available YEAR and DOY
+
 import re
-# Parse data page with BeautifulSoup
+
 
 def create_year_doy_dict(messenger_data_page_soup):
     
@@ -121,7 +121,7 @@ def threaded_download_image_with_check(download_queue):
     return True
     
 def download_image_all(year_doy_image_dict):
-    print("This will take a lot of time\n\n Keep lots of coffee handy!!")
+    print("This will take a lot of time\n\nKeep lots of coffee handy!!")
     print("You can resume your downloads by running this function again.")
     print("So don't panic if download gets interrupted.")
     
