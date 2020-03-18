@@ -1,4 +1,5 @@
 import click
+from crismis_gsoc.data import start_download
 
 @click.group()
 def cli():
@@ -8,7 +9,7 @@ def cli():
 @click.option('--docker', is_flag=True, default=False, help='Train model inside docker')
 def train(docker):
     if docker:
-        pass
+        raise NotImplementedError
     else:
         pass
 
@@ -17,7 +18,7 @@ def train(docker):
 @click.option('--docker', is_flag=True, default=False, help='Run test inside docker')
 def test(docker):
     if docker:
-        pass
+        raise NotImplementedError
     else:
         pass
 
@@ -25,7 +26,7 @@ def test(docker):
 @click.option('--docker', is_flag=True, default=False, help='Run algorithm inside docker')
 def predict(docker):
     if docker:
-        pass
+        raise NotImplementedError
     else:
         pass
 
@@ -33,6 +34,6 @@ def predict(docker):
 @click.option('--docker', is_flag=True, default=False, help='Download datasets inside docker')
 def download(docker):
     if docker:
-        pass
+        raise NotImplementedError
     else:
-        pass
+        start_download()
