@@ -38,9 +38,12 @@ def generate_doy_data_page_url(YEAR, DOY):
     return url
 
 def create_year_doy_images_dict(year_doy_dict):
+    path = os.path.join(os.path.dirname(__file__), "year_doy_images.json")
+    print(path)
     # Check and return if a previously fetched year_doy_images_dict exist on disk
-    if os.path.exists("./year_doy_images.json"):
-        year_doy_images_dict = json.load(open("./year_doy_images.json"))
+    if os.path.exists(path):
+        fp = open(path)
+        year_doy_images_dict = json.load(fp)
         return year_doy_images_dict
     # Start fetching
     print("This will take time. Have patience...")
@@ -69,7 +72,7 @@ def create_year_doy_images_dict(year_doy_dict):
                     year_doy_images_dict[year][doy].append(link)
     print('done!')
     # Save year_doy_images_dict to disk as a json file
-    json.dumps(year_doy_images_dict, open("./year_doy_images.json"))
+    json.dumps(year_doy_images_dict, open(path))
     return year_doy_images_dict
 
 def download_image(year, doy, image):
@@ -85,16 +88,19 @@ def download_image(year, doy, image):
         print("Resuming Download...")
         img = requests.get(url)
     # Create dirs if not already present
-    if not os.path.exists(f"../../notebooks/data/{year}/{doy}"):
-        os.makedirs(f"../../notebooks/data/{year}/{doy}")
+    path = os.path.realpath(os.path.join(os.path.realpath(os.path.dirname(__file__)), os.path.realpath(f"../../notebooks/data/{year}/{doy}/{image}")))
+    if not os.path.exists(path):
+        os.makedirs(path)
     # Save file to disk
-    open(f"../../notebooks/data/{year}/{doy}/{image}","wb").write(img.content)
+    open(path,"wb").write(img.content)
     
 def threaded_download_image_with_check(download_queue):
     while not download_queue.empty():
         (image, year, doy) = download_queue.get()
         # continue loop to next iter if file already present on disk
-        if os.path.exists(f"../../notebooks/data/{year}/{doy}/{image}"):
+        path = os.path.realpath(os.path.join(os.path.realpath(os.path.dirname(__file__)), os.path.realpath(f"../../notebooks/data/{year}/{doy}/{image}")))
+        print('Path is: '+ path)
+        if os.path.exists(path):
             continue
         # Create download url    
         url = f"https://pdsimage2.wr.usgs.gov/archive/mess-e_v_h-mdis-2-edr-rawdata-v1.0/MSGRMDS_1001/DATA/{year}_{doy}/{image}"
@@ -114,10 +120,10 @@ def threaded_download_image_with_check(download_queue):
             # Retry to download image
             img = requests.get(url)
         # Create dirs if not already present
-        if not os.path.exists(f"../../notebooks/data/{year}/{doy}"):
-            os.makedirs(f"../../notebooks/data/{year}/{doy}")
+        if not os.path.exists(path):
+            os.makedirs(path)
         # Save file to disk
-        open(f"../../notebooks/data/{year}/{doy}/{image}","wb").write(img.content)
+        open(path,"wb").write(img.content)
     return True
     
 def download_image_all(year_doy_image_dict):
@@ -146,7 +152,7 @@ def download_image_all(year_doy_image_dict):
     #     for n_proc_i in range(2):
     #         result = pool.apply_async(threaded_download_image_with_check, download_queue)
     download_processes = []
-    for n_proc_i in range(int(mp.cpu_count())):
+    for n_proc_i in range(int(mp.cpu_count())/2):
         download_process = Process(target=threaded_download_image_with_check, args=(download_queue,))
         download_processes.append(download_process)
         download_process.start()

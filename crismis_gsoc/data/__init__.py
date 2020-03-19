@@ -1,7 +1,7 @@
 import multiprocessing as mp
 from .download import create_year_doy_dict, create_year_doy_images_dict, download_image_all
 from bs4 import BeautifulSoup
-
+import requests
 
 def start_download():
     # fetch messenger data page
